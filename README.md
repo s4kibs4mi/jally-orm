@@ -19,6 +19,17 @@ config.NumConns = 5
 orm, err := NewSession(config)
 ```
 
+Sample Struct,
+```go
+type Student struct {
+	ID        gocql.UUID `json:"id" jorm:"primary_key"`
+	Name      string     `json:"name"`
+	Roll      int        `json:"roll"`
+	CGPA      float32    `json:"cgpa"`
+	IsPresent bool       `json:"is_present"`
+}
+```
+
 Create Table,
 ```go
 orm, err := NewSession(config)
