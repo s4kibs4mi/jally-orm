@@ -23,7 +23,7 @@ func toCQLXType(f reflect.StructField) string {
 		return "DOUBLE"
 	case "bool":
 		return "BOOLEAN"
-	case "time":
+	case "time.Time":
 		return "timestamp"
 	}
 	return ""
@@ -40,11 +40,4 @@ func toCQLXName(f reflect.StructField) string {
 func isPrimaryKey(f reflect.StructField) bool {
 	val := f.Tag.Get("jorm")
 	return strings.Contains(strings.ToLower(val), "primary_key")
-}
-
-func isUUID(f reflect.StructField) bool {
-	if f.Type.Name() == "gocql.UUID" {
-		return true
-	}
-	return false
 }
