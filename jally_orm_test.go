@@ -50,10 +50,11 @@ func TestJallyORM_Save(t *testing.T) {
 		panic(err)
 	}
 	s := Student{
-		ID:   gocql.TimeUUID(),
-		Name: "Sakib",
-		Roll: 12345,
-		CGPA: 3.50,
+		ID:        gocql.TimeUUID(),
+		Name:      "Sakib",
+		Roll:      12345,
+		CGPA:      3.50,
+		IsPresent: true,
 	}
 	q := NewQuery().Space("test").Table("students").Model(s)
 	err = orm.Save(q)
