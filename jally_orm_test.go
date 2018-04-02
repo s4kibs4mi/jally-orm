@@ -8,10 +8,11 @@ import (
 )
 
 type Student struct {
-	ID   gocql.UUID `json:"id" jorm:"primary_key"`
-	Name string     `json:"name"`
-	Roll int        `json:"roll"`
-	CGPA float32    `json:"cgpa"`
+	ID        gocql.UUID `json:"id" jorm:"primary_key"`
+	Name      string     `json:"name"`
+	Roll      int        `json:"roll"`
+	CGPA      float32    `json:"cgpa"`
+	IsPresent bool       `json:"is_present"`
 }
 
 func TestJallyORM_Create(t *testing.T) {
