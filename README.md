@@ -27,6 +27,7 @@ type Student struct {
 	Roll      int        `json:"roll"`
 	CGPA      float32    `json:"cgpa"`
 	IsPresent bool       `json:"is_present"`
+	CreatedAt time.Time  `json:"created_at"`
 }
 ```
 
@@ -53,6 +54,7 @@ s := Student{
 	Roll:      12345,
 	CGPA:      3.50,
 	IsPresent: true,
+	CreatedAt: time.Now(),
 }
 q := NewQuery().Space("test").Table("students").Model(s)
 err = orm.Save(q)
