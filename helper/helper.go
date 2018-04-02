@@ -1,16 +1,21 @@
-package jally_orm
+package helper
 
 import (
 	"reflect"
 	"strings"
 )
 
-func toCQLXType(f reflect.StructField) string {
+// ToCQLXType convert go struct type to CQL type
+func ToCQLXType(f reflect.StructField) string {
 	switch f.Type.String() {
 	case "gocql.UUID":
 		return "UUID"
 	case "string":
 		return "TEXT"
+	case "int8":
+		return "TINYINT"
+	case "int16":
+		return "SMALLINT"
 	case "int":
 		return "INT"
 	case "int32":
@@ -25,11 +30,14 @@ func toCQLXType(f reflect.StructField) string {
 		return "BOOLEAN"
 	case "time.Time":
 		return "timestamp"
+	case "[]uint8":
+		return "BOLB"
 	}
 	return ""
 }
 
-func toCQLXName(f reflect.StructField) string {
+// ToCQLXName convert go struct field to CQL name
+func ToCQLXName(f reflect.StructField) string {
 	val, ok := f.Tag.Lookup("json")
 	if ok {
 		return val
@@ -37,7 +45,8 @@ func toCQLXName(f reflect.StructField) string {
 	return f.Name
 }
 
-func isPrimaryKey(f reflect.StructField) bool {
+// IsPrimaryKey checks if the field is primary key
+func IsPrimaryKey(f reflect.StructField) bool {
 	val := f.Tag.Get("jorm")
 	return strings.Contains(strings.ToLower(val), "primary_key")
 }
