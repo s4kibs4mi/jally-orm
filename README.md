@@ -3,7 +3,7 @@ An ORM library for Cassandra and ScyllaDB written in Golang.
 
 Status : Development ongoing
 
-Example,
+### Examples,
 
 Connect,
 ```go
