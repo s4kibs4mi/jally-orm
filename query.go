@@ -1,8 +1,10 @@
 package jally_orm
 
 import (
-	"reflect"
 	"fmt"
+	"reflect"
+
+	"github.com/alaminopu/jally-orm/helper"
 )
 
 type Query struct {
@@ -36,13 +38,13 @@ func (q *Query) Create() string {
 	pKey := ""
 	for i := 0; i < vOf.NumField(); i++ {
 		typeOfField := vOf.Type().Field(i)
-		name := toCQLXName(typeOfField)
+		name := helper.ToCQLXName(typeOfField)
 		if i == 0 {
-			qField = fmt.Sprintf("%s%s %s", qField, name, toCQLXType(typeOfField))
+			qField = fmt.Sprintf("%s%s %s", qField, name, helper.ToCQLXType(typeOfField))
 		} else {
-			qField = fmt.Sprintf("%s,%s %s", qField, name, toCQLXType(typeOfField))
+			qField = fmt.Sprintf("%s,%s %s", qField, name, helper.ToCQLXType(typeOfField))
 		}
-		if isPrimaryKey(typeOfField) {
+		if helper.IsPrimaryKey(typeOfField) {
 			if pKey == "" {
 				pKey = name
 			} else {
@@ -68,10 +70,10 @@ func (q *Query) Insert() (string, []interface{}) {
 		typeOfField := vOf.Type().Field(i)
 
 		if i == 0 {
-			qField += toCQLXName(typeOfField)
+			qField += helper.ToCQLXName(typeOfField)
 			qVal += "?"
 		} else {
-			qField += "," + toCQLXName(typeOfField)
+			qField += "," + helper.ToCQLXName(typeOfField)
 			qVal += ",?"
 		}
 		values = append(values, valOfField.Interface())
