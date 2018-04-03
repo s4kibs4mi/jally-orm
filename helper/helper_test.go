@@ -7,6 +7,7 @@ import (
 
 	"github.com/gocql/gocql"
 	"github.com/stretchr/testify/assert"
+	"fmt"
 )
 
 type Table struct {
@@ -49,4 +50,17 @@ func TestToCQLXType(t *testing.T) {
 	assert.Equal(t, "TINYINT", ToCQLXType(x.Type().Field(8)))
 	assert.Equal(t, "SMALLINT", ToCQLXType(x.Type().Field(9)))
 	assert.Equal(t, "INT", ToCQLXType(x.Type().Field(10)))
+}
+
+type Message struct {
+	From string
+	Body string
+	When time.Time
+}
+
+func TestMapToStruct(t *testing.T) {
+	m := map[string]interface{}{"From": "Sakib", "Body": "Hello World", "When": time.Now()}
+	message := Message{}
+	MapToStruct(&message, m)
+	fmt.Println(message)
 }

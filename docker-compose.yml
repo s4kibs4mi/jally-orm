@@ -1,0 +1,69 @@
+version: '3.1'
+
+services:
+  scylladb-1:
+    image: scylladb/scylla
+    container_name: scylladb-1
+    ports:
+      - 7000:7000
+      - 7001:7001
+      - 9042:9042
+      - 9160:9160
+      - 10000:10000
+    volumes:
+      - "./storage/scylladb/1:/var/lib/scylla"
+    networks:
+      scyllanw:
+        ipv4_address: 192.168.75.10
+    restart: on-failure
+
+  scylladb-2:
+    image: scylladb/scylla
+    container_name: scylladb-2
+    entrypoint:
+      - "/docker-entrypoint.py"
+      - "--seeds"
+      - "192.168.75.10"
+    ports:
+      - 7010:7000
+      - 9043:9042
+      - 9161:9160
+    volumes:
+      - "./storage/scylladb/2:/var/lib/scylla"
+    links:
+      - scylladb-1
+    depends_on:
+      - scylladb-1
+    networks:
+      scyllanw:
+        ipv4_address: 192.168.75.20
+    restart: on-failure
+
+  scylladb-3:
+    image: scylladb/scylla
+    container_name: scylladb-3
+    entrypoint:
+      - "/docker-entrypoint.py"
+      - "--seeds"
+      - "192.168.75.10"
+    ports:
+      - 7020:7000
+      - 9044:9042
+      - 9162:9160
+    volumes:
+      - "./storage/scylladb/3:/var/lib/scylla"
+    links:
+      - scylladb-1
+    depends_on:
+      - scylladb-1
+    networks:
+      scyllanw:
+        ipv4_address: 192.168.75.30
+    restart: on-failure
+
+networks:
+  scyllanw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.75.0/16

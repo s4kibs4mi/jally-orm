@@ -2,6 +2,7 @@ package jally_orm
 
 import (
 	"github.com/gocql/gocql"
+	"github.com/s4kibs4mi/jally-orm/helper"
 )
 
 // JallyORM represents JallyORM instance
@@ -39,7 +40,14 @@ func (orm *JallyORM) Delete(v interface{}, u Updater) error {
 	return nil
 }
 
-func (orm *JallyORM) Find(v interface{}, q Query) error {
+func (orm *JallyORM) FindByID(ID interface{}, dst interface{}, q Query) error {
+	qTxt := q.FindByID()
+	m := map[string]interface{}{}
+	ok := orm.Query(qTxt, ID).Iter().MapScan(m)
+	if !ok {
+		return gocql.ErrNotFound
+	}
+	helper.MapToStruct(dst, m)
 	return nil
 }
 

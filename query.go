@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/alaminopu/jally-orm/helper"
+	"github.com/s4kibs4mi/jally-orm/helper"
 )
 
 type Query struct {
@@ -79,4 +79,9 @@ func (q *Query) Insert() (string, []interface{}) {
 		values = append(values, valOfField.Interface())
 	}
 	return fmt.Sprintf("INSERT INTO %s.%s(%s) VALUES(%s)", q.spaceName, q.tableName, qField, qVal), values
+}
+
+func (q *Query) FindByID() string {
+	cQuery := fmt.Sprintf("SELECT * FROM %s.%s WHERE id = ?;", q.spaceName, q.tableName)
+	return cQuery
 }

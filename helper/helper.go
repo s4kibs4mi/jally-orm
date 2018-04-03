@@ -50,3 +50,16 @@ func IsPrimaryKey(f reflect.StructField) bool {
 	val := f.Tag.Get("jorm")
 	return strings.Contains(strings.ToLower(val), "primary_key")
 }
+
+func MapToStruct(dst interface{}, values map[string]interface{}) {
+	vOf := reflect.ValueOf(dst).Elem()
+	tOf := reflect.TypeOf(dst).Elem()
+	for i := 0; i < vOf.NumField(); i++ {
+		field := tOf.Field(i)
+		tag := ToCQLXName(field)
+		vField := vOf.Field(i)
+		if vField.IsValid() && vField.CanSet() {
+			vField.Set(reflect.ValueOf(values[tag]))
+		}
+	}
+}

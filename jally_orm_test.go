@@ -62,3 +62,28 @@ func TestJallyORM_Save(t *testing.T) {
 	err = orm.Save(q)
 	assert.Nil(t, err)
 }
+
+func TestQuery_FindByID(t *testing.T) {
+	config := gocql.NewCluster("localhost:9042")
+	config.Consistency = gocql.Quorum
+	config.Keyspace = "test"
+
+	config.Timeout = 5 * time.Second
+	config.PoolConfig = gocql.PoolConfig{
+		HostSelectionPolicy: gocql.RoundRobinHostPolicy(),
+	}
+	config.NumConns = 5
+	orm, err := NewSession(config)
+	if err != nil {
+		panic(err)
+	}
+	queryID, err := gocql.ParseUUID("cf2921d6-3680-11e8-897d-d0a637eb34d1")
+	assert.Nil(t, err)
+	s := Student{}
+	q := NewQuery().Space("test").Table("students")
+	err = orm.FindByID(queryID, &s, q)
+	assert.Nil(t, err)
+	if queryID == s.ID {
+		t.Log(s)
+	}
+}
