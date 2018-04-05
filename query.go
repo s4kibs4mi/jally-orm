@@ -85,3 +85,12 @@ func (q *Query) FindByID() string {
 	cQuery := fmt.Sprintf("SELECT * FROM %s.%s WHERE id = ?;", q.spaceName, q.tableName)
 	return cQuery
 }
+
+func (q *Query) Find(c Condition) string {
+	cQuery := fmt.Sprintf("SELECT * FROM %s.%s", q.spaceName, q.tableName)
+	if c.qFields != "" {
+		cQuery = fmt.Sprintf("%s WHERE %s", cQuery, c.Where())
+	}
+	cQuery += ";"
+	return cQuery
+}

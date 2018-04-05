@@ -21,8 +21,8 @@ func NewSession(cfg *gocql.ClusterConfig) (*JallyORM, error) {
 	return orm, nil
 }
 
-// Create creates table of model if not exists
-func (orm *JallyORM) Create(q Query) error {
+// CreateTable creates table of model if not exists
+func (orm *JallyORM) CreateTable(q Query) error {
 	return orm.Query(q.Create()).Exec()
 }
 
@@ -40,15 +40,30 @@ func (orm *JallyORM) Delete(v interface{}, u Updater) error {
 	return nil
 }
 
-func (orm *JallyORM) FindByID(ID interface{}, dst interface{}, q Query) error {
+// FindByID queries by id and returns interface, error
+func (orm *JallyORM) FindByID(ID interface{}, q Query) (interface{}, error) {
 	qTxt := q.FindByID()
 	m := map[string]interface{}{}
 	ok := orm.Query(qTxt, ID).Iter().MapScan(m)
 	if !ok {
-		return gocql.ErrNotFound
+		return nil, gocql.ErrNotFound
 	}
+	var dst interface{}
 	helper.MapToStruct(dst, m)
-	return nil
+	return dst, nil
+}
+
+// FindByID queries by id and returns list of interface
+func (orm *JallyORM) Find(c Condition, q Query) []interface{} {
+	qTxt := q.Find(c)
+	var items []interface{}
+	m := map[string]interface{}{}
+	it := orm.Query(qTxt, c.qValues...).Iter()
+	for it.MapScan(m) {
+		helper.MapToStruct(q.model, m)
+		items = append(items, q.model)
+	}
+	return items
 }
 
 func (orm *JallyORM) Count(v interface{}, q Query) (int, error) {

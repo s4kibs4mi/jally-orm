@@ -32,7 +32,7 @@ func TestJallyORM_Create(t *testing.T) {
 	}
 	s := Student{}
 	q := NewQuery().Space("test").Table("students").Model(s)
-	err = orm.Create(q)
+	err = orm.CreateTable(q)
 	assert.Nil(t, err, "Something went wrong")
 }
 
@@ -85,5 +85,31 @@ func TestQuery_FindByID(t *testing.T) {
 	assert.Nil(t, err)
 	if queryID == s.ID {
 		t.Log(s)
+	}
+}
+
+func TestJallyORM_Find(t *testing.T) {
+	config := gocql.NewCluster("localhost:9042")
+	config.Consistency = gocql.Quorum
+	config.Keyspace = "test"
+
+	config.Timeout = 5 * time.Second
+	config.PoolConfig = gocql.PoolConfig{
+		HostSelectionPolicy: gocql.RoundRobinHostPolicy(),
+	}
+	config.NumConns = 5
+	orm, err := NewSession(config)
+	if err != nil {
+		panic(err)
+	}
+	s := Student{}
+	q := NewQuery().Space("test").Table("students").Model(&s)
+	c := Condition{}
+	//c.Eq("name", "Sakib")
+
+	students := orm.Find(c, q)
+	t.Log("Len : ", len(students))
+	for _, v := range students {
+		t.Log(*v.(*Student))
 	}
 }
