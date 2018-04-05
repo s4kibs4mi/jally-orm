@@ -48,9 +48,8 @@ func (orm *JallyORM) FindByID(ID interface{}, q Query) (interface{}, error) {
 	if !ok {
 		return nil, gocql.ErrNotFound
 	}
-	var dst interface{}
-	helper.MapToStruct(dst, m)
-	return dst, nil
+	helper.MapToStruct(q.model, m)
+	return q.model, nil
 }
 
 // FindByID queries by id and returns list of interface
@@ -62,6 +61,8 @@ func (orm *JallyORM) Find(c Condition, q Query) []interface{} {
 	for it.MapScan(m) {
 		helper.MapToStruct(q.model, m)
 		items = append(items, q.model)
+		m = map[string]interface{}{}
+		q.model = q.model.Clean()
 	}
 	return items
 }

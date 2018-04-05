@@ -10,7 +10,7 @@ import (
 type Query struct {
 	tableName string
 	spaceName string
-	model     interface{}
+	model     JallyORMModel
 }
 
 func NewQuery() Query {
@@ -27,13 +27,13 @@ func (q Query) Space(name string) Query {
 	return q
 }
 
-func (q Query) Model(v interface{}) Query {
+func (q Query) Model(v JallyORMModel) Query {
 	q.model = v
 	return q
 }
 
 func (q *Query) Create() string {
-	vOf := reflect.ValueOf(q.model)
+	vOf := reflect.ValueOf(q.model).Elem()
 	qField := ""
 	pKey := ""
 	for i := 0; i < vOf.NumField(); i++ {
@@ -61,7 +61,7 @@ func (q *Query) Create() string {
 }
 
 func (q *Query) Insert() (string, []interface{}) {
-	vOf := reflect.ValueOf(q.model)
+	vOf := reflect.ValueOf(q.model).Elem()
 	qField := ""
 	qVal := ""
 	var values []interface{}

@@ -16,6 +16,10 @@ type Student struct {
 	CreatedAt time.Time  `json:"created_at"`
 }
 
+func (s *Student) Clean() JallyORMModel {
+	return &Student{}
+}
+
 func TestJallyORM_Create(t *testing.T) {
 	config := gocql.NewCluster("localhost:9042")
 	config.Consistency = gocql.Quorum
@@ -31,7 +35,7 @@ func TestJallyORM_Create(t *testing.T) {
 		panic(err)
 	}
 	s := Student{}
-	q := NewQuery().Space("test").Table("students").Model(s)
+	q := NewQuery().Space("test").Table("students").Model(&s)
 	err = orm.CreateTable(q)
 	assert.Nil(t, err, "Something went wrong")
 }
@@ -52,13 +56,13 @@ func TestJallyORM_Save(t *testing.T) {
 	}
 	s := Student{
 		ID:        gocql.TimeUUID(),
-		Name:      "Sakib",
-		Roll:      12345,
-		CGPA:      3.50,
-		IsPresent: true,
+		Name:      "Nur",
+		Roll:      12346,
+		CGPA:      3.10,
+		IsPresent: false,
 		CreatedAt: time.Now(),
 	}
-	q := NewQuery().Space("test").Table("students").Model(s)
+	q := NewQuery().Space("test").Table("students").Model(&s)
 	err = orm.Save(q)
 	assert.Nil(t, err)
 }
@@ -80,11 +84,11 @@ func TestQuery_FindByID(t *testing.T) {
 	queryID, err := gocql.ParseUUID("cf2921d6-3680-11e8-897d-d0a637eb34d1")
 	assert.Nil(t, err)
 	s := Student{}
-	q := NewQuery().Space("test").Table("students")
-	err = orm.FindByID(queryID, &s, q)
+	q := NewQuery().Space("test").Table("students").Model(&s)
+	v, err := orm.FindByID(queryID, q)
 	assert.Nil(t, err)
-	if queryID == s.ID {
-		t.Log(s)
+	if queryID == v.(*Student).ID {
+		t.Log(*v.(*Student))
 	}
 }
 
